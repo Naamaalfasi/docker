@@ -1,0 +1,69 @@
+services:
+  flask-app:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./app:/app
+      - pdf_storage:/app/storage/pdfs
+      - chroma_storage:/app/storage/chroma
+    depends_on:
+      - mongodb
+      - chromadb
+      - ollama
+    networks:
+      - backend
+    environment:
+      MONGODB_URI: mongodb://mongo:27017/
+      OLLAMA_HOST: http://ollama:11434
+      CHROMA_HOST: chromadb
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    networks:
+      - backend
+    volumes:
+      - mongo_data:/data/db
+
+  mongo-express:
+    image: mongo-express
+    ports:
+      - "8081:8081"
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongo
+    depends_on:
+      - mongodb
+    networks:
+      - backend
+
+  chromadb:
+    image: chromadb/chroma
+    ports:
+      - "8000:8000"
+    networks:
+      - backend
+    volumes:
+      - chroma_storage:/chroma/chroma
+
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ./modelfile/Modelfile:/Modelfile
+      - ollama_data:/root/.ollama
+    command: >
+      sh -c "ollama serve & sleep 10 && ollama create academiqa -f /Modelfile && tail -f /dev/null"
+    networks:
+      - backend
+
+volumes:
+  mongo_data:
+  ollama_data:
+  pdf_storage:
+  chroma_storage:
+
+networks:
+  backend:

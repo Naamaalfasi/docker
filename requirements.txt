@@ -1,0 +1,30 @@
+# Flask and web framework
+Flask==2.3.3
+flask-restx==1.2.0
+Werkzeug==2.3.7
+flask-cors==4.0.0
+
+# MongoDB client
+pymongo==4.5.0
+
+# PDF Processing
+PyPDF2==3.0.1
+
+# Environment configuration
+python-dotenv==1.0.0
+
+# LangChain and vector embeddings
+langchain==0.1.14
+langchain-community==0.0.19
+langchain-ollama==0.1.1
+chromadb==0.4.22
+
+# HTTP requests (for querying Ollama endpoint)
+requests==2.31.0
+
+# Pydantic models
+pydantic==1.10.13
+
+# Testing
+pytest==7.4.2
+pytest-flask==1.2.0
