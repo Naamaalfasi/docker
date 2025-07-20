@@ -1,0 +1,79 @@
+services:
+  flask-app:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./app:/app
+      - pdf_storage:/app/storage/pdfs
+      - chroma_storage:/app/storage/chroma
+    depends_on:
+      mongodb:
+        condition: service_started
+      chromadb:
+        condition: service_started
+      ollama:
+        condition: service_healthy
+    networks:
+      - backend
+    environment:
+      MONGODB_URI: mongodb://mongodb:27017/
+      MONGODB_DATABASE: pdf_upload_db
+      OLLAMA_HOST: http://ollama:11434
+      CHROMA_HOST: chromadb
+
+  ollama:
+    image: ollama/ollama:0.1.29
+    ports:
+      - "11434:11434"
+    volumes:
+      - ./modelfile:/modelfile
+      - ollama_data:/root/.ollama
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    networks:
+      - backend
+
+  mongodb:
+    container_name: mongodb
+    image: mongo:7.0.5
+    ports:
+      - "27017:27017"
+    networks:
+      - backend
+    volumes:
+      - mongo_data:/data/db
+
+  mongo-express:
+    image: mongo-express:1.0.0
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongodb
+      ME_CONFIG_MONGODB_PORT: 27017
+    depends_on:
+      - mongodb
+    networks:
+      - backend
+
+  chromadb:
+    image: chromadb/chroma:0.4.22
+    ports:
+      - "8000:8000"
+    networks:
+      - backend
+    volumes:
+      - chroma_storage:/chroma/chroma
+
+volumes:
+  mongo_data:
+  ollama_data:
+  pdf_storage:
+  chroma_storage:
+
+networks:
+  backend:
