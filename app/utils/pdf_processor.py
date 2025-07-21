@@ -3,6 +3,7 @@ from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
 from utils.embeddings import get_embeddings_model
+from datetime import datetime
 
 def process_pdf(file_path: str, chroma_dir: str = None) -> int:
     """
@@ -26,7 +27,8 @@ def process_pdf(file_path: str, chroma_dir: str = None) -> int:
             chunk.metadata.update({
                 'chunk_id': f"chunk_{i}",
                 'document_name': os.path.basename(file_path),
-                'upload_time': str(pages[0].metadata.get('creation_date', 'Unknown')),
+                'upload_time': datetime.utcnow().isoformat(),
+                'creation_date': str(pages[0].metadata.get('creation_date', 'Unknown')),
                 'total_pages': len(pages)
             })
         

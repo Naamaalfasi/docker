@@ -1,14 +1,15 @@
 import os
-from langchain_ollama import OllamaEmbeddings
+from langchain_community.embeddings import HuggingFaceEmbeddings
 
 def get_embeddings_model():
     """
-    Initialize and return Ollama embeddings model
+    Initialize and return HuggingFace embeddings model
     """
-    ollama_host = os.getenv('OLLAMA_HOST', 'http://ollama:11434')
-    embedding_model = os.getenv('OLLAMA_EMBEDDING_MODEL', 'nomic-embed-text')
+    model_name = os.getenv('EMBEDDING_MODEL', 'sentence-transformers/all-MiniLM-L6-v2')
     
-    return OllamaEmbeddings(
-        model=embedding_model,
-        base_url=ollama_host
+    print(f"DEBUG: Using embedding model: {model_name}")
+    
+    return HuggingFaceEmbeddings(
+        model_name=model_name,
+        model_kwargs={'device': 'cpu'}
     )

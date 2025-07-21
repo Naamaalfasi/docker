@@ -10,45 +10,13 @@ A Flask-based RAG (Retrieval-Augmented Generation) API for querying academic pap
 - **Detailed Logging**: Comprehensive logging of all operations
 - **Swagger UI**: Interactive API documentation
 
-## 📋 Prerequisites
-
-- Docker and Docker Compose
-- At least 8GB RAM (for Ollama models)
-- 10GB free disk space
-
-## 🛠️ Technology Stack
-
-### Core Components
-- **Python**: 3.10.13
-- **Flask**: 3.0.0
-- **Flask-RESTX**: 1.3.0
-- **Ollama**: 0.1.29
-- **ChromaDB**: 0.4.22
-- **MongoDB**: 7.0.5
-
-### AI/ML Libraries
-- **LangChain**: 0.1.0
-- **LangChain-Community**: 0.0.20
-- **LangChain-Ollama**: 0.1.0
-- **LangChain-Chroma**: 0.1.0
-
-### Database & Storage
-- **PyMongo**: 4.6.0
-- **ChromaDB**: 0.4.22
-- **MongoDB**: 7.0.5
 
 ## 🚀 Quick Start
 
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd docker-master
-   ```
 
-2. **Start the services**
-   ```bash
-   docker-compose up -d
-   ```
+1. **Start the services**
+   - docker-compose up -d
+   - docker-compose up --build
 
 3. **Access the API**
    - Swagger UI: http://localhost:5000/swagger/
@@ -64,7 +32,7 @@ A Flask-based RAG (Retrieval-Augmented Generation) API for querying academic pap
 ### 2. Query Documents
 - **POST** `/query/`
 - Ask questions about uploaded documents
-- Requires document name in question
+- Validation- Requires document name in question
 
 ### 3. View Logs
 - **GET** `/logs/`
@@ -73,14 +41,9 @@ A Flask-based RAG (Retrieval-Augmented Generation) API for querying academic pap
 ## 🔧 Configuration
 
 ### Environment Variables
-- `MONGODB_URI`: MongoDB connection string
-- `MONGODB_DATABASE`: Database name
-- `OLLAMA_HOST`: Ollama service URL
-- `CHROMA_HOST`: ChromaDB service URL
-- `DEBUG`: Enable debug mode
 
 ### Model Configuration
-The system uses the `academiqa` model based on `llama3:latest` with custom academic prompts.
+The system uses the `academiqa` model based on Ollama with custom academic prompts.
 
 ## 📊 Monitoring
 
@@ -96,40 +59,30 @@ All operations are logged to MongoDB with detailed metadata:
 - Model response metrics
 - Error tracking
 
-## 🐛 Troubleshooting
-
-### Common Issues
-
-1. **Ollama Model Not Found**
-   ```bash
-   docker exec docker-master-ollama-1 ollama list
-   ```
-
-2. **Memory Issues**
-   - Ensure at least 8GB RAM available
-   - Consider reducing model size
-
-3. **Port Conflicts**
-   - Check if ports 5000, 11434, 27017, 8000, 8081 are available
-
-### Logs
-```bash
-# View Flask app logs
-docker-compose logs flask-app
-
-# View Ollama logs
-docker-compose logs ollama
-
-# View all logs
-docker-compose logs
-```
-
-## 🔄 Updates
-
-### Updating Dependencies
-1. Update version numbers in `requirements.txt`
-2. Update Docker images in `docker-compose.yml`
-3. Rebuild containers: `docker-compose build --no-cache`
+### 4. File Constracture
+docker-master/
+├── app/
+│   ├── api/
+│   │   ├── endpoints.py      # API endpoints
+│   │   └── swagger.py        # Swagger configuration
+│   ├── database/
+│   │   ├── mongo_client.py   # MongoDB connection
+│   │   └── chroma_client.py  # ChromaDB connection
+│   ├── rag/
+│   │   ├── chain.py          # RAG chain implementation
+│   │   ├── prompt_templates.py
+│   │   └── output_parser.py
+│   ├── utils/
+│   │   ├── embeddings.py     # Embeddings configuration
+│   │   └── pdf_processor.py  # PDF processing
+│   ├── config.py             # Application configuration
+│   └── main.py               # Flask application
+├── modelfile/
+│   └── Modelfile             # Ollama model configuration
+│   └── start_ollama.sh
+├── docker-compose.yml        # Docker services
+├── Dockerfile                # Flask app container
+└── requirements.txt          # Python dependencies
 
 ### Version Locking
 All dependencies are locked to specific versions to ensure reproducibility:
@@ -140,18 +93,3 @@ All dependencies are locked to specific versions to ensure reproducibility:
 ## 📝 License
 
 This project is licensed under the MIT License.
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
-
-## 📞 Support
-
-For issues and questions:
-1. Check the troubleshooting section
-2. Review the logs
-3. Open an issue with detailed information

@@ -21,6 +21,7 @@ services:
       MONGODB_DATABASE: pdf_upload_db
       OLLAMA_HOST: http://ollama:11434
       CHROMA_HOST: chromadb
+      OLLAMA_EMBEDDING_MODEL: llama3
 
   ollama:
     image: ollama/ollama:0.1.29
@@ -29,14 +30,16 @@ services:
     volumes:
       - ./modelfile:/modelfile
       - ollama_data:/root/.ollama
+    entrypoint: ["/bin/bash", "/modelfile/start_ollama.sh"]
     healthcheck:
       test: ["CMD", "ollama", "list"]
       interval: 30s
       timeout: 10s
       retries: 5
-      start_period: 40s
+      start_period: 60s
     networks:
       - backend
+    restart: unless-stopped
 
   mongodb:
     container_name: mongodb
@@ -61,13 +64,19 @@ services:
       - backend
 
   chromadb:
-    image: chromadb/chroma:0.4.22
+    image: chromadb/chroma:latest
     ports:
       - "8000:8000"
     networks:
       - backend
     volumes:
       - chroma_storage:/chroma/chroma
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/heartbeat"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
 
 volumes:
   mongo_data:

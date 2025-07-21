@@ -38,8 +38,12 @@ query_response_model = query_ns.model('QueryResponse', {
 logs_response_model = logs_ns.model('LogsResponse', {
     'success': fields.Boolean(description='Operation success status'),
     'message': fields.String(description='Response message'),
-    'logs': fields.List(fields.Raw, description='Log records')
+    'logs': fields.List(fields.Raw, description='Log records'),
+    'x_fields': fields.String(description='X-FIELDS header value', required=False)
 })
+
+logs_parser = reqparse.RequestParser()
+logs_parser.add_argument('log_id', location='args', type=str, required=False, help='Log ID to filter logs')
 
 @pdf_ns.route('/papers')
 class PDFUpload(Resource):
@@ -281,9 +285,14 @@ class Query(Resource):
 
 @logs_ns.route('/')
 class Logs(Resource):
+    @logs_ns.expect(logs_parser)
     def get(self):
         try:
+            args = logs_parser.parse_args()
+            log_id = args.get('log_id')
             logs = get_log_records()
+            if log_id:
+                logs = [log for log in logs if str(log.get('record_id') or log.get('log_id') or log.get('id')) == log_id]
             insert_log_record({
                 'timestamp': datetime.datetime.utcnow().isoformat(),
                 'endpoint': '/logs/',

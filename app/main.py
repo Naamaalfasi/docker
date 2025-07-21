@@ -10,7 +10,7 @@ def create_app():
     app = Flask(__name__)
     
     # Enable CORS
-    CORS(app)
+    CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
     
     # Configure app
     app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
