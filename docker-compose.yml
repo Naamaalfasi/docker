@@ -24,7 +24,7 @@ services:
       OLLAMA_EMBEDDING_MODEL: llama3
 
   ollama:
-    image: ollama/ollama:0.1.29
+    image: ollama/ollama:latest
     ports:
       - "11434:11434"
     volumes:
