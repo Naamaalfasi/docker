@@ -43,7 +43,7 @@ services:
 
   mongodb:
     container_name: mongodb
-    image: mongo:7.0.5
+    image: mongo:latest
     ports:
       - "27017:27017"
     networks:
@@ -52,7 +52,7 @@ services:
       - mongo_data:/data/db
 
   mongo-express:
-    image: mongo-express:1.0.0
+    image: mongo-express:latest
     ports:
       - "8081:8081"
     environment:
