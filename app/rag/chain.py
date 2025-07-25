@@ -7,7 +7,6 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains.retrieval import create_retrieval_chain
 import os
 import time
-from app.main import ollama_llm_instance
 
 def run_query_chain(question: str, document_name: str = None):
     try:
@@ -40,8 +39,15 @@ def run_query_chain(question: str, document_name: str = None):
 
         prompt_template = get_prompt_template()
         
-        llm = ollama_llm_instance
+        ollama_host = os.getenv('OLLAMA_HOST', 'http://ollama:11434')
+        ollama_model = os.getenv('OLLAMA_MODEL', 'academiqa')
         
+        llm = OllamaLLM(
+            model=ollama_model, 
+            base_url=ollama_host,
+            timeout=120  # 2 minutes timeout
+        )
+
         # Get retrieved documents
         retrieved_docs = retriever.invoke(question)
         
@@ -111,7 +117,14 @@ def run_query_chain_with_details(question: str, document_name: str = None):
 
         prompt_template = get_prompt_template()
         
-        llm = ollama_llm_instance
+        ollama_host = os.getenv('OLLAMA_HOST', 'http://ollama:11434')
+        ollama_model = os.getenv('OLLAMA_MODEL', 'academiqa')
+        
+        llm = OllamaLLM(
+            model=ollama_model, 
+            base_url=ollama_host,
+            timeout=120
+        )
         
         # Get retrieved documents with timing
         retrieval_start = time.time()
