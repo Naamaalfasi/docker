@@ -40,7 +40,7 @@ def run_query_chain(question: str, document_name: str = None):
         prompt_template = get_prompt_template()
         
         ollama_host = os.getenv('OLLAMA_HOST', 'http://ollama:11434')
-        ollama_model = os.getenv('OLLAMA_MODEL', 'academiqa')
+        ollama_model = os.getenv('OLLAMA_MODEL', 'academiqa:latest')
         
         llm = OllamaLLM(
             model=ollama_model, 
@@ -118,7 +118,7 @@ def run_query_chain_with_details(question: str, document_name: str = None):
         prompt_template = get_prompt_template()
         
         ollama_host = os.getenv('OLLAMA_HOST', 'http://ollama:11434')
-        ollama_model = os.getenv('OLLAMA_MODEL', 'academiqa')
+        ollama_model = os.getenv('OLLAMA_MODEL', 'academiqa:latest')
         
         llm = OllamaLLM(
             model=ollama_model, 
